@@ -1,0 +1,13 @@
+{
+  "name": "estoque-componentes",
+  "version": "1.0.0",
+  "description": "Sistema de estoque com Firebase",
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^9.6.1"
+  },
+  "devDependencies": {
+    "firebase-tools": "^11.0.0"
+  }
+}

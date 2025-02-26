@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estoque de Componentes</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Firebase 9.6.1 (modo compatível) -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Estoque de Componentes Eletrônicos</h1>
+  </header>
+
+  <section class="search-section">
+    <input type="text" id="searchInput" placeholder="Buscar componente (nome ou posição)">
+  </section>
+
+  <section class="form-section">
+    <h2>Adicionar Componente</h2>
+    <form id="componentForm">
+      <input type="text" id="nameInput" placeholder="Nome do Componente" required>
+      <input type="text" id="positionInput" placeholder="Posição (ex: A1)" required>
+      <select id="typeInput" required>
+        <option value="">Selecione o Tipo</option>
+        <option value="eletronico">Eletrônico</option>
+        <option value="eletrico">Elétrico</option>
+        <option value="mecanico">Mecânico</option>
+      </select>
+      <textarea id="characteristicsInput" placeholder="Características"></textarea>
+      <input type="number" id="quantityInput" placeholder="Quantidade" min="1" required>
+      <button type="submit">Adicionar</button>
+    </form>
+  </section>
+
+  <section class="cards-section" id="cardsSection"></section>
+
+  <script src="script.js"></script>
+</body>
+</html>
