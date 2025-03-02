@@ -12,6 +12,8 @@
 <body>
   <header>
     <h1>Estoque de Componentes Eletrônicos</h1>
+    <!-- Ícone de alerta no canto superior direito -->
+    <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima">⚠️</div>
   </header>
 
   <section class="search-section">
@@ -21,21 +23,30 @@
   <section class="form-section">
     <h2>Adicionar Componente</h2>
     <form id="componentForm">
-      <input type="text" id="nameInput" placeholder="Nome do Componente" required>
-      <input type="text" id="positionInput" placeholder="Posição (ex: A1)" required>
-      <select id="typeInput" required>
+      <input type="text" id="nameInput" name="nameInput" placeholder="Nome do Componente" required>
+      <input type="text" id="positionInput" name="positionInput" placeholder="Posição (ex: A1)" required>
+      <select id="typeInput" name="typeInput" required>
         <option value="">Selecione o Tipo</option>
         <option value="eletronico">Eletrônico</option>
         <option value="eletrico">Elétrico</option>
         <option value="mecanico">Mecânico</option>
       </select>
-      <textarea id="characteristicsInput" placeholder="Características"></textarea>
-      <input type="number" id="quantityInput" placeholder="Quantidade" min="1" required>
+      <textarea id="characteristicsInput" name="characteristicsInput" placeholder="Características"></textarea>
+      <input type="number" id="quantityInput" name="quantityInput" placeholder="Quantidade" min="1" required>
       <button type="submit">Adicionar</button>
     </form>
   </section>
 
   <section class="cards-section" id="cardsSection"></section>
+
+  <!-- Modal de alerta para componentes sinalizados com Qtd. Mínima -->
+  <div id="alertModal" class="alert-modal" style="display:none;">
+    <div class="alert-modal-content">
+      <span id="closeAlertModal" class="close-alert">&times;</span>
+      <h2>Componentes com Quantidade Mínima</h2>
+      <div id="alertList"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

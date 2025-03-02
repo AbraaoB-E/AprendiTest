@@ -15,14 +15,21 @@ if (!firebase.apps.length) {
 }
 const db = firebase.firestore();
 
+// Variável para armazenar todos os documentos recebidos
+let allComponents = [];
+
 // Referências DOM
 const componentForm = document.getElementById('componentForm');
 const cardsSection = document.getElementById('cardsSection');
 const searchInput = document.getElementById('searchInput');
+const alertIcon = document.getElementById('alertIcon');
+const alertModal = document.getElementById('alertModal');
+const alertList = document.getElementById('alertList');
+const closeAlertModal = document.getElementById('closeAlertModal');
 
 // ----------- FUNÇÕES PRINCIPAIS -----------
 
-// Cria cards dos componentes
+// Cria o card para cada componente
 function createComponentCard(doc) {
   const data = doc.data();
   const card = document.createElement('div');
@@ -39,6 +46,7 @@ function createComponentCard(doc) {
       <div class="menu-content">
         <button class="edit-btn">Editar</button>
         <button class="delete-btn">Excluir</button>
+        <button class="alert-btn">Sinalizar Qtd. Mínima</button>
       </div>
     </div>
   `;
@@ -76,17 +84,50 @@ function createComponentCard(doc) {
     }
   });
 
+  // Sinalizar componente com quantidade mínima (atualiza o campo "alerted" no Firestore)
+  menu.querySelector('.alert-btn').addEventListener('click', async (e) => {
+    e.stopPropagation();
+    try {
+      await db.collection('components').doc(doc.id).update({ alerted: true });
+      // Opcional: adicionar feedback visual no card sinalizado
+      card.classList.add('alertado');
+      menu.classList.remove('active');
+    } catch (error) {
+      alert(`Erro ao sinalizar: ${error.message}`);
+    }
+  });
+
   return card;
+}
+
+// Renderiza os cards com base no termo de busca
+function renderCards(filterTerm) {
+  cardsSection.innerHTML = '';
+  const filtered = allComponents.filter(doc => {
+    const data = doc.data();
+    return (
+      data.name.toLowerCase().includes(filterTerm) ||
+      data.position.toLowerCase().includes(filterTerm)
+    );
+  });
+  filtered.forEach(doc => {
+    const card = createComponentCard(doc);
+    cardsSection.appendChild(card);
+  });
 }
 
 // ----------- EVENT LISTENERS -----------
 
-// Carrega dados iniciais
+// Atualiza a lista global e renderiza os cards conforme a busca
 db.collection("components").orderBy("name").onSnapshot((snapshot) => {
-  cardsSection.innerHTML = '';
-  snapshot.docs.forEach(doc => {
-    cardsSection.appendChild(createComponentCard(doc));
-  });
+  allComponents = snapshot.docs;
+  // Se houver termo na busca, renderiza os cards; caso contrário, limpa a seção
+  const term = searchInput.value.trim().toLowerCase();
+  if (term !== "") {
+    renderCards(term);
+  } else {
+    cardsSection.innerHTML = '';
+  }
 });
 
 // Adiciona novo componente
@@ -102,7 +143,7 @@ componentForm.addEventListener('submit', async (e) => {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  // Validação
+  // Validação dos campos obrigatórios
   if (!componentData.name || !componentData.position || !componentData.type || !componentData.quantity) {
     alert("Preencha os campos obrigatórios!");
     return;
@@ -120,7 +161,7 @@ componentForm.addEventListener('submit', async (e) => {
       return;
     }
 
-    // Adiciona ao Firestore
+    // Adiciona o componente ao Firestore
     await db.collection('components').add(componentData);
     componentForm.reset();
   } catch (error) {
@@ -128,11 +169,45 @@ componentForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Filtro de busca
+// Filtro de busca: exibe os cards somente se houver texto no campo; caso contrário, limpa a área
 searchInput.addEventListener('input', () => {
-  const term = searchInput.value.toLowerCase();
-  document.querySelectorAll('.card').forEach(card => {
-    const text = card.textContent.toLowerCase();
-    card.style.display = text.includes(term) ? 'block' : 'none';
-  });
+  const term = searchInput.value.trim().toLowerCase();
+  if (term === "") {
+    cardsSection.innerHTML = '';
+  } else {
+    renderCards(term);
+  }
+});
+
+// Ao clicar no ícone de alerta, busca e exibe os componentes sinalizados (alerted == true)
+alertIcon.addEventListener('click', async () => {
+  try {
+    const querySnapshot = await db.collection('components').where('alerted', '==', true).get();
+    alertList.innerHTML = '';
+    if (querySnapshot.empty) {
+      alertList.innerHTML = '<p>Nenhum componente sinalizado.</p>';
+    } else {
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        const item = document.createElement('div');
+        item.innerHTML = `<p><strong>${data.name}</strong> (Qtd.: ${data.quantity}) - Posição: ${data.position}</p>`;
+        alertList.appendChild(item);
+      });
+    }
+    alertModal.style.display = 'block';
+  } catch (error) {
+    alert(`Erro ao carregar alertas: ${error.message}`);
+  }
+});
+
+// Fecha o modal de alerta ao clicar no "X"
+closeAlertModal.addEventListener('click', () => {
+  alertModal.style.display = 'none';
+});
+
+// Fecha o modal se o usuário clicar fora dele
+window.addEventListener('click', (e) => {
+  if (e.target === alertModal) {
+    alertModal.style.display = 'none';
+  }
 });
