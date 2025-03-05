@@ -1,4 +1,5 @@
-// Configuração do Firebase (substitua pelos seus dados)
+// -------------------- Firebase Configuration --------------------
+// Configuração do Firebase – substitua pelos seus dados se necessário
 const firebaseConfig = {
   apiKey: "AIzaSyDujs0cCkS99p5FOCjMoZmCvnERXJNBRBY",
   authDomain: "consultav1.firebaseapp.com",
@@ -9,16 +10,20 @@ const firebaseConfig = {
   measurementId: "G-VPFF191MNJ"
 };
 
-// Inicialização do Firebase
+// Inicializa o Firebase (se ainda não estiver inicializado)
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
+
+// Referência para o Firestore
 const db = firebase.firestore();
 
-// Variável para armazenar todos os documentos recebidos
+// -------------------- Variáveis Globais --------------------
+
+// Array para armazenar todos os documentos de componentes
 let allComponents = [];
 
-// Referências DOM
+// -------------------- Referências do DOM --------------------
 const componentForm = document.getElementById('componentForm');
 const cardsSection = document.getElementById('cardsSection');
 const searchInput = document.getElementById('searchInput');
@@ -27,15 +32,21 @@ const alertModal = document.getElementById('alertModal');
 const alertList = document.getElementById('alertList');
 const closeAlertModal = document.getElementById('closeAlertModal');
 
-// ----------- FUNÇÕES PRINCIPAIS -----------
+// -------------------- Funções --------------------
 
-// Cria o card para cada componente
+/**
+ * Cria um card para um componente específico.
+ * @param {Object} doc - Documento do Firestore com os dados do componente.
+ * @returns {HTMLElement} - Elemento card do componente.
+ */
 function createComponentCard(doc) {
   const data = doc.data();
+  // Cria o container do card
   const card = document.createElement('div');
   card.className = 'card';
   card.dataset.id = doc.id;
 
+  // Define o conteúdo HTML do card com os detalhes do componente e o menu de ações
   card.innerHTML = `
     <h3>${data.name} (${data.position})</h3>
     <p>Tipo: ${data.type}</p>
@@ -51,21 +62,24 @@ function createComponentCard(doc) {
     </div>
   `;
 
-  // Controle do menu
+  // ----- Controle do Menu -----
+  // Exibe ou oculta o menu de ações ao clicar nos três pontinhos
   const menu = card.querySelector('.menu');
   menu.querySelector('.menu-dots').addEventListener('click', (e) => {
     e.stopPropagation();
     menu.classList.toggle('active');
   });
 
-  // Excluir componente
+  // ----- Exclusão do Componente -----
+  // Remove o componente do Firestore após confirmação
   menu.querySelector('.delete-btn').addEventListener('click', () => {
     if (confirm("Excluir permanentemente?")) {
       db.collection('components').doc(doc.id).delete();
     }
   });
 
-  // Editar componente
+  // ----- Edição do Componente -----
+  // Permite editar os dados do componente através de prompts
   menu.querySelector('.edit-btn').addEventListener('click', async () => {
     const newData = {
       name: prompt("Nome:", data.name),
@@ -75,6 +89,7 @@ function createComponentCard(doc) {
       quantity: parseInt(prompt("Quantidade:", data.quantity))
     };
 
+    // Atualiza os dados se os campos obrigatórios forem preenchidos
     if (newData.name && newData.position && newData.type && newData.quantity) {
       try {
         await db.collection('components').doc(doc.id).update(newData);
@@ -84,12 +99,13 @@ function createComponentCard(doc) {
     }
   });
 
-  // Sinalizar componente com quantidade mínima (atualiza o campo "alerted" no Firestore)
+  // ----- Sinalização de Quantidade Mínima -----
+  // Marca o componente com 'alerted' no Firestore para indicar quantidade mínima
   menu.querySelector('.alert-btn').addEventListener('click', async (e) => {
     e.stopPropagation();
     try {
       await db.collection('components').doc(doc.id).update({ alerted: true });
-      // Opcional: adicionar feedback visual no card sinalizado
+      // Adiciona uma indicação visual (opcional)
       card.classList.add('alertado');
       menu.classList.remove('active');
     } catch (error) {
@@ -100,9 +116,13 @@ function createComponentCard(doc) {
   return card;
 }
 
-// Renderiza os cards com base no termo de busca
+/**
+ * Renderiza os cards dos componentes com base no termo de busca.
+ * @param {string} filterTerm - Termo usado para filtrar os componentes.
+ */
 function renderCards(filterTerm) {
   cardsSection.innerHTML = '';
+  // Filtra os componentes pelo nome ou posição
   const filtered = allComponents.filter(doc => {
     const data = doc.data();
     return (
@@ -110,18 +130,18 @@ function renderCards(filterTerm) {
       data.position.toLowerCase().includes(filterTerm)
     );
   });
+  // Cria e adiciona cada card filtrado à seção de cards
   filtered.forEach(doc => {
     const card = createComponentCard(doc);
     cardsSection.appendChild(card);
   });
 }
 
-// ----------- EVENT LISTENERS -----------
+// -------------------- Event Listeners --------------------
 
-// Atualiza a lista global e renderiza os cards conforme a busca
+// Atualiza a lista de componentes e renderiza os cards com base na busca em tempo real
 db.collection("components").orderBy("name").onSnapshot((snapshot) => {
   allComponents = snapshot.docs;
-  // Se houver termo na busca, renderiza os cards; caso contrário, limpa a seção
   const term = searchInput.value.trim().toLowerCase();
   if (term !== "") {
     renderCards(term);
@@ -130,7 +150,8 @@ db.collection("components").orderBy("name").onSnapshot((snapshot) => {
   }
 });
 
-// Adiciona novo componente
+// ----- Adicionar Novo Componente -----
+// Captura o envio do formulário e adiciona um novo componente ao Firestore
 componentForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -150,7 +171,7 @@ componentForm.addEventListener('submit', async (e) => {
   }
 
   try {
-    // Verifica duplicatas
+    // Verifica se já existe um componente com o mesmo nome e posição
     const duplicate = await db.collection('components')
       .where('name', '==', componentData.name)
       .where('position', '==', componentData.position)
@@ -169,7 +190,8 @@ componentForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Filtro de busca: exibe os cards somente se houver texto no campo; caso contrário, limpa a área
+// ----- Busca de Componentes -----
+// Atualiza os cards exibidos conforme o termo digitado na busca
 searchInput.addEventListener('input', () => {
   const term = searchInput.value.trim().toLowerCase();
   if (term === "") {
@@ -179,33 +201,78 @@ searchInput.addEventListener('input', () => {
   }
 });
 
-// Ao clicar no ícone de alerta, busca e exibe os componentes sinalizados (alerted == true)
+// ----- Funcionalidade do Modal de Alertas -----
+// Ao clicar no ícone de alerta, busca os componentes com 'alerted' == true e exibe no modal
 alertIcon.addEventListener('click', async () => {
   try {
+    // Consulta os componentes sinalizados
     const querySnapshot = await db.collection('components').where('alerted', '==', true).get();
     alertList.innerHTML = '';
+
     if (querySnapshot.empty) {
+      // Se não houver componentes alertados, mostra mensagem e define o ícone para amarelo
       alertList.innerHTML = '<p>Nenhum componente sinalizado.</p>';
+      alertIcon.style.color = 'yellow';
     } else {
+      // Define o ícone de alerta como vermelho
+      alertIcon.style.color = 'red';
+
+      // Utiliza um Set para evitar componentes duplicados (baseado em nome e posição)
+      const seen = new Set();
+
       querySnapshot.forEach(doc => {
         const data = doc.data();
+        const key = `${data.name}-${data.position}`;
+        if (seen.has(key)) return; // Ignora duplicatas
+        seen.add(key);
+
+        // Cria um card para cada componente alertado
         const item = document.createElement('div');
-        item.innerHTML = `<p><strong>${data.name}</strong> (Qtd.: ${data.quantity}) - Posição: ${data.position}</p>`;
+        item.className = 'alert-card';
+        item.innerHTML = `<div>
+          <p><strong>${data.name}</strong> (Qtd.: ${data.quantity}) - Posição: ${data.position}</p>
+        </div>`;
+
+        // Cria um botão minimalista para remover o alerta do componente
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-alert-btn';
+        removeBtn.textContent = 'Remover alerta';
+
+        // Ao clicar, atualiza o componente removendo a flag 'alerted'
+        removeBtn.addEventListener('click', async () => {
+          try {
+            await db.collection('components').doc(doc.id).update({ alerted: false });
+            // Remove o card do alerta
+            item.remove();
+            // Se não houver mais componentes alertados, atualiza o ícone e exibe mensagem
+            if (alertList.querySelectorAll('.alert-card').length === 0) {
+              alertIcon.style.color = 'yellow';
+              alertList.innerHTML = '<p>Nenhum componente sinalizado.</p>';
+            }
+          } catch (error) {
+            alert(`Erro ao remover alerta: ${error.message}`);
+          }
+        });
+
+        // Adiciona o botão ao card e o card à lista de alertas
+        item.appendChild(removeBtn);
         alertList.appendChild(item);
       });
     }
+    // Exibe o modal de alertas
     alertModal.style.display = 'block';
   } catch (error) {
     alert(`Erro ao carregar alertas: ${error.message}`);
   }
 });
 
-// Fecha o modal de alerta ao clicar no "X"
+// ----- Fechar Modal de Alertas -----
+// Fecha o modal ao clicar no botão "X"
 closeAlertModal.addEventListener('click', () => {
   alertModal.style.display = 'none';
 });
 
-// Fecha o modal se o usuário clicar fora dele
+// Fecha o modal se o usuário clicar fora do conteúdo do modal
 window.addEventListener('click', (e) => {
   if (e.target === alertModal) {
     alertModal.style.display = 'none';
