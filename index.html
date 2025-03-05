@@ -4,22 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Estoque de Componentes</title>
+  <!-- Importa o arquivo CSS com os estilos -->
   <link rel="stylesheet" href="style.css">
   <!-- Firebase 9.6.1 (modo compatível) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
+  <!-- Cabeçalho com o título e o ícone de alerta -->
   <header>
     <h1>Estoque de Componentes Eletrônicos</h1>
-    <!-- Ícone de alerta no canto superior direito -->
-    <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima">⚠️</div>
+    <!-- Ícone de alerta com cor padrão amarelo (não há componentes mínimos) -->
+    <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima" style="color: yellow;">⚠️</div>
   </header>
 
+  <!-- Seção de busca para filtrar os componentes -->
   <section class="search-section">
     <input type="text" id="searchInput" placeholder="Buscar componente (nome ou posição)">
   </section>
 
+  <!-- Seção do formulário para adicionar novos componentes -->
   <section class="form-section">
     <h2>Adicionar Componente</h2>
     <form id="componentForm">
@@ -37,17 +41,21 @@
     </form>
   </section>
 
+  <!-- Seção onde os cards dos componentes serão renderizados -->
   <section class="cards-section" id="cardsSection"></section>
 
-  <!-- Modal de alerta para componentes sinalizados com Qtd. Mínima -->
+  <!-- Modal para exibir os componentes com quantidade mínima (alertados) -->
   <div id="alertModal" class="alert-modal" style="display:none;">
     <div class="alert-modal-content">
+      <!-- Botão para fechar o modal -->
       <span id="closeAlertModal" class="close-alert">&times;</span>
       <h2>Componentes com Quantidade Mínima</h2>
+      <!-- Container para os cards de alerta dos componentes -->
       <div id="alertList"></div>
     </div>
   </div>
 
+  <!-- Importa o arquivo JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
