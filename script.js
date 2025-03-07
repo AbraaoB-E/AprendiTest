@@ -213,10 +213,10 @@ alertIcon.addEventListener('click', async () => {
     if (querySnapshot.empty) {
       // Se não houver componentes alertados, mostra mensagem e define o ícone para amarelo
       alertList.innerHTML = '<p>Nenhum componente sinalizado.</p>';
-      <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
+      alertIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>';
     } else {
       // Define o ícone de alerta como vermelho
-      <i calss="fa-triangle-exclamation" style="color:#ff0000;"></i>
+      alertIcon.innerHTML = '<i calss="fa-triangle-exclamation" style="color:#ff0000;"></i>';
 
       // Utiliza um Set para evitar componentes duplicados (baseado em nome e posição)
       const seen = new Set();
