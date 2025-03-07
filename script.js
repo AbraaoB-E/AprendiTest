@@ -1,3 +1,4 @@
+
 // -------------------- Firebase Configuration --------------------
 // Configuração do Firebase – substitua pelos seus dados se necessário
 const firebaseConfig = {
@@ -212,10 +213,10 @@ alertIcon.addEventListener('click', async () => {
     if (querySnapshot.empty) {
       // Se não houver componentes alertados, mostra mensagem e define o ícone para amarelo
       alertList.innerHTML = '<p>Nenhum componente sinalizado.</p>';
-      alertIcon.style.color = 'yellow';
+      <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
     } else {
       // Define o ícone de alerta como vermelho
-      alertIcon.style.color = 'red';
+      <i calss="fa-triangle-exclamation" style="color:#ff0000;"></i>
 
       // Utiliza um Set para evitar componentes duplicados (baseado em nome e posição)
       const seen = new Set();

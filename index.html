@@ -9,13 +9,17 @@
   <!-- Firebase 9.6.1 (modo compatível) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://kit.fontawesome.com/65f22fe718.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
   <!-- Cabeçalho com o título e o ícone de alerta -->
   <header>
     <h1>Estoque de Componentes Eletrônicos</h1>
     <!-- Ícone de alerta com cor padrão amarelo (não há componentes mínimos) -->
-    <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima" >⚠️</div>
+    <!-- <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima" style="color: yellow;">⚠️</div> -->
+    <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
   </header>
 
   <!-- Seção de busca para filtrar os componentes -->
