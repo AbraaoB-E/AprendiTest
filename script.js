@@ -216,7 +216,7 @@ alertIcon.addEventListener('click', async () => {
       alertIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>';
     } else {
       // Define o ícone de alerta como vermelho
-      alertIcon.innerHTML = '<i calss="fa-triangle-exclamation" style="color: #ff0000;"></i>';
+      alertIcon.innerHTML = '<i class="fa-triangle-exclamation" style="color: #ff0000;"></i>';
 
       // Utiliza um Set para evitar componentes duplicados (baseado em nome e posição)
       const seen = new Set();
