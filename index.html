@@ -1,65 +1,85 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Estoque de Componentes</title>
-  <!-- Importa o arquivo CSS com os estilos -->
-  <link rel="stylesheet" href="style.css">
-  <!-- Firebase 9.6.1 (modo compatível) -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  <script src="https://kit.fontawesome.com/65f22fe718.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-</head>
-<body>
-  <!-- Cabeçalho com o título e o ícone de alerta -->
-  <header>
-    <h1>Estoque de Componentes Eletrônicos</h1>
-    <!-- Ícone de alerta com cor padrão amarelo (não há componentes mínimos) -->
-    <!-- <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima" style="color: yellow;">⚠️</div> -->
-    <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima"><i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i></div>
-  </header>
-
-  <!-- Seção de busca para filtrar os componentes -->
-  <section class="search-section">
-    <input type="text" id="searchInput" placeholder="Buscar componente (nome ou posição)">
-  </section>
-
-  <!-- Seção do formulário para adicionar novos componentes -->
-  <section class="form-section">
-    <h2>Adicionar Componente</h2>
-    <form id="componentForm">
-      <input type="text" id="nameInput" name="nameInput" placeholder="Nome do Componente" required>
-      <input type="text" id="positionInput" name="positionInput" placeholder="Posição (ex: A1)" required>
-      <select id="typeInput" name="typeInput" required>
-        <option value="">Selecione o Tipo</option>
-        <option value="eletronico">Eletrônico</option>
-        <option value="eletrico">Elétrico</option>
-        <option value="mecanico">Mecânico</option>
-      </select>
-      <textarea id="characteristicsInput" name="characteristicsInput" placeholder="Características"></textarea>
-      <input type="number" id="quantityInput" name="quantityInput" placeholder="Quantidade" min="1" required>
-      <button type="submit">Adicionar</button>
-    </form>
-  </section>
-
-  <!-- Seção onde os cards dos componentes serão renderizados -->
-  <section class="cards-section" id="cardsSection"></section>
-
-  <!-- Modal para exibir os componentes com quantidade mínima (alertados) -->
-  <div id="alertModal" class="alert-modal" style="display:none;">
-    <div class="alert-modal-content">
-      <!-- Botão para fechar o modal -->
-      <span id="closeAlertModal" class="close-alert">&times;</span>
-      <h2>Componentes com Quantidade Mínima</h2>
-      <!-- Container para os cards de alerta dos componentes -->
-      <div id="alertList"></div>
+  <head>
+    <!-- Define o conjunto de caracteres e a responsividade -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Título da página -->
+    <title>Estoque de Componentes</title>
+    
+    <!-- Importa o arquivo CSS com os estilos -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Importação do Firebase (modo compatível) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Importa Font Awesome para ícones -->
+    <script src="https://kit.fontawesome.com/65f22fe718.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" 
+          integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" 
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <!-- Elemento de animação de fundo com tema semafórico -->
+    <div id="backgroundAnimation">
+      <div class="traffic-light">
+        <!-- Cada "light" representa uma cor do semáforo -->
+        <div class="light red"></div>
+        <div class="light yellow"></div>
+        <div class="light green"></div>
+      </div>
     </div>
-  </div>
 
-  <!-- Importa o arquivo JavaScript -->
-  <script src="script.js"></script>
-</body>
+    <!-- Cabeçalho com o título e o ícone de alerta -->
+    <header>
+      <!-- <img src="LOGO.png" alt="LogoCTA" width="100"> -->
+      <h1>Estoque de Componentes Eletrônicos</h1>
+      <!-- Ícone de alerta posicionado dentro do header; ele ficará fixo na área do cabeçalho -->
+      <div id="alertIcon" class="alert-icon" title="Ver componentes com quantidade mínima">
+        <i class="fa-solid fa-triangle-exclamation" style="color: #FFD43B;"></i>
+      </div>
+    </header>
+
+    <!-- Seção de busca para filtrar os componentes -->
+    <section class="search-section">
+      <input type="text" id="searchInput" placeholder="Buscar componente (nome ou posição)">
+    </section>
+
+    <!-- Seção do formulário para adicionar novos componentes -->
+    <section class="form-section">
+      <h2>Adicionar Componente</h2>
+      <form id="componentForm">
+        <input type="text" id="nameInput" name="nameInput" placeholder="Nome do Componente" required>
+        <input type="text" id="positionInput" name="positionInput" placeholder="Posição (ex: A1)" required>
+        <select id="typeInput" name="typeInput" required>
+          <option value="">Selecione o Tipo</option>
+          <option value="eletronico">Eletrônico</option>
+          <option value="eletrico">Elétrico</option>
+          <option value="mecanico">Mecânico</option>
+        </select>
+        <textarea id="characteristicsInput" name="characteristicsInput" placeholder="Características"></textarea>
+        <input type="number" id="quantityInput" name="quantityInput" placeholder="Quantidade" min="1" required>
+        <button type="submit">Adicionar</button>
+      </form>
+    </section>
+
+    <!-- Seção onde os cards dos componentes serão renderizados -->
+    <section class="cards-section" id="cardsSection"></section>
+
+    <!-- Modal para exibir os componentes sinalizados (com quantidade mínima) -->
+    <div id="alertModal" class="alert-modal" style="display:none;">
+      <div class="alert-modal-content">
+        <!-- Botão para fechar o modal -->
+        <span id="closeAlertModal" class="close-alert">&times;</span>
+        <h2>Componentes com Quantidade Mínima</h2>
+        <!-- Container para os cards de alerta dos componentes -->
+        <div id="alertList"></div>
+      </div>
+    </div>
+
+    <!-- Importa o arquivo JavaScript com a lógica do sistema -->
+    <script src="script.js"></script>
+  </body>
 </html>

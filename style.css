@@ -1,3 +1,12 @@
+/*-----------------------------------------------------------------
+  GERAL - Previne scroll horizontal e configura a base da página
+------------------------------------------------------------------*/
+
+/* Evita scroll horizontal em qualquer tamanho de tela */
+html, body {
+  overflow-x: hidden;
+}
+
 /* Estilos básicos para o body */
 body {
   font-family: Arial, sans-serif;
@@ -7,7 +16,95 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
+
+/*-----------------------------------------------------------------
+  ANIMAÇÃO DE FUNDO - Tema Semafórico
+------------------------------------------------------------------*/
+
+/* Elemento que abrange toda a tela e exibe a animação de semáforo */
+#backgroundAnimation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0.2;
+}
+
+/* Container do semáforo */
+.traffic-light {
+  width: 60px;
+  background: #333;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Estilo básico para cada "luz" */
+.light {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin: 5px 0;
+  opacity: 0.3;
+}
+
+/* Luz vermelha com animação */
+.light.red {
+  background: red;
+  animation: redOn 6s infinite;
+}
+
+/* Luz amarela com animação */
+.light.yellow {
+  background: yellow;
+  animation: yellowOn 6s infinite;
+}
+
+/* Luz verde com animação */
+.light.green {
+  background: green;
+  animation: greenOn 6s infinite;
+}
+
+/* Animação para a luz vermelha */
+@keyframes redOn {
+  0% { opacity: 1; }
+  33% { opacity: 1; }
+  34% { opacity: 0.3; }
+  100% { opacity: 0.3; }
+}
+
+/* Animação para a luz amarela */
+@keyframes yellowOn {
+  0% { opacity: 0.3; }
+  33% { opacity: 0.3; }
+  34% { opacity: 1; }
+  66% { opacity: 1; }
+  67% { opacity: 0.3; }
+  100% { opacity: 0.3; }
+}
+
+/* Animação para a luz verde */
+@keyframes greenOn {
+  0% { opacity: 0.3; }
+  66% { opacity: 0.3; }
+  67% { opacity: 1; }
+  100% { opacity: 1; }
+}
+
+/*-----------------------------------------------------------------
+  CABEÇALHO E ELEMENTOS DE FORMULÁRIO
+------------------------------------------------------------------*/
 
 /* Estilos para o cabeçalho */
 header {
@@ -16,10 +113,10 @@ header {
   padding: 1em;
   color: #fff;
   text-align: center;
-  position: relative; /* Necessário para posicionar o ícone de alerta */
+  position: relative;
 }
 
-/* Estilos para títulos */
+/* Estilo para os títulos (h1, h2) */
 h1, h2 {
   margin: 0.5em 0;
 }
@@ -31,12 +128,13 @@ h1, h2 {
   max-width: 600px;
 }
 
-/* Estilos para os elementos do formulário e campo de busca */
+/* Organiza os elementos do formulário em coluna */
 .form-section form {
   display: flex;
   flex-direction: column;
 }
 
+/* Estiliza inputs, selects, textareas e o campo de busca */
 .form-section input, 
 .form-section select, 
 .form-section textarea, 
@@ -47,7 +145,11 @@ h1, h2 {
   border-radius: 4px;
 }
 
-/* Estilos gerais para botões */
+/*-----------------------------------------------------------------
+  BOTÕES
+------------------------------------------------------------------*/
+
+/* Estilo padrão para botões */
 button {
   padding: 0.7em;
   margin: 0.5em 0;
@@ -59,11 +161,16 @@ button {
   transition: background 0.3s;
 }
 
+/* Efeito hover para botões */
 button:hover {
   background: #3a3f47;
 }
 
-/* Estilos para a seção de cards */
+/*-----------------------------------------------------------------
+  CARDS DOS COMPONENTES
+------------------------------------------------------------------*/
+
+/* Container que agrupa os cards */
 .cards-section {
   display: flex;
   flex-wrap: wrap;
@@ -72,7 +179,7 @@ button:hover {
   max-width: 1200px;
 }
 
-/* Estilos para os cards dos componentes */
+/* Estilos para cada card individual */
 .card {
   background: #fff;
   border: 1px solid #ddd;
@@ -87,11 +194,16 @@ button:hover {
   animation: fadeIn 0.5s forwards;
 }
 
+/* Efeito hover para os cards */
 .card:hover {
   transform: translateY(-5px);
 }
 
-/* Estilos para o menu de ações dentro do card */
+/*-----------------------------------------------------------------
+  MENU DE AÇÕES NOS CARDS
+------------------------------------------------------------------*/
+
+/* Container do menu (ícone de três pontinhos) */
 .menu {
   position: absolute;
   top: 10px;
@@ -99,11 +211,12 @@ button:hover {
   cursor: pointer;
 }
 
+/* Estilo para o ícone dos três pontinhos */
 .menu-dots {
   font-size: 1.5em;
 }
 
-/* Estilos para o conteúdo do menu (dropdown) */
+/* Container do conteúdo do menu (dropdown) */
 .menu-content {
   display: none;
   position: absolute;
@@ -115,6 +228,7 @@ button:hover {
   z-index: 10;
 }
 
+/* Botões dentro do menu */
 .menu-content button {
   width: 100%;
   padding: 0.5em;
@@ -125,11 +239,12 @@ button:hover {
   cursor: pointer;
 }
 
+/* Efeito hover para os botões do menu */
 .menu-content button:hover {
   background: #f0f2f5;
 }
 
-/* Exibe o menu ao clicar nos três pontinhos */
+/* Exibe o menu quando a classe "active" está presente */
 .menu.active .menu-content {
   display: block;
 }
@@ -139,16 +254,29 @@ button:hover {
   to { opacity: 1; }
 }
 
-/* Estilo para o ícone de alerta no cabeçalho */
+/*-----------------------------------------------------------------
+  ÍCONE DE ALERTA
+------------------------------------------------------------------*/
+
+/* 
+  O ícone de alerta agora é posicionado de forma absoluta dentro do header.
+  Ele fica 15px distante do canto superior direito do header, mantendo seu tamanho em 1.5em.
+  Assim, quando a página for rolada, o ícone sairá de vista junto com o header.
+*/
 .alert-icon {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 35px;
+  right: 40px;
   cursor: pointer;
   font-size: 1.5em;
+  z-index: 1001;
 }
 
-/* Estilos para o modal de alerta */
+/*-----------------------------------------------------------------
+  MODAL DE ALERTA
+------------------------------------------------------------------*/
+
+/* Estilo geral do modal (fundo semi-transparente) */
 .alert-modal {
   position: fixed;
   z-index: 1000;
@@ -160,7 +288,7 @@ button:hover {
   background-color: rgba(0,0,0,0.5);
 }
 
-/* Estilos para o conteúdo do modal */
+/* Estilo do conteúdo do modal */
 .alert-modal-content {
   background-color: #fefefe;
   margin: 10% auto;
@@ -169,11 +297,11 @@ button:hover {
   width: 80%;
   max-width: 600px;
   border-radius: 8px;
-  max-height: 80vh; /* Limita a altura máxima */
-  overflow: hidden;  /* Esconde overflow extra */
+  max-height: 80vh;
+  overflow: hidden;
 }
 
-/* Estilos para o botão de fechar o modal */
+/* Botão de fechar o modal */
 .close-alert {
   color: #aaa;
   float: right;
@@ -182,22 +310,27 @@ button:hover {
   cursor: pointer;
 }
 
+/* Efeito hover para o botão de fechar */
 .close-alert:hover {
   color: black;
 }
 
-/* Estilos para o container da lista de alertas (com scroll simples) */
+/* Container para a lista de alertas (com scroll vertical, se necessário) */
 #alertList {
-  max-height: 400px; /* Tamanho padrão do container */
-  overflow-y: auto;  /* Scroll vertical */
-  padding-right: 10px; /* Espaço para o scrollbar */
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
-/* Estilos para os cards de componentes dentro do alerta */
+/*-----------------------------------------------------------------
+  ALERT CARDS (dentro do modal)
+------------------------------------------------------------------*/
+
+/* Estilo para cada card de componente no alerta */
 .alert-card {
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px; /* Bordas arredondadas */
+  border-radius: 8px;
   margin: 0.5em 0;
   padding: 0.5em;
   display: flex;
@@ -205,17 +338,18 @@ button:hover {
   align-items: center;
 }
 
-/* Estilos para o botão minimalista de remoção de alerta */
+/* Botão de remoção do alerta */
 .remove-alert-btn {
   background: none;
   border: none;
   font-size: 0.9em;
-  color: black; /* Fonte preta */
+  color: black;
   cursor: pointer;
   padding: 0.2em 0.5em;
   transition: background 0.2s;
 }
 
+/* Efeito hover para o botão de remoção */
 .remove-alert-btn:hover {
   background: #f0f2f5;
 }
